@@ -26,7 +26,7 @@ graph.appendFunc('n^2', n => n < 0 ? NaN : n ** 2, '#fc1500');
 graph.appendFunc('sine', Math.sin, 'cyan');
 */
 
-graph.appendFunc('sine', Math.sin, '#18A558');
+graph.appendFunc('cos', Math.cos, '#18A558');
 
 function draw() {
     requestAnimationFrame(draw);
