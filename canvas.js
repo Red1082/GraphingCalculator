@@ -28,21 +28,21 @@ export default class Canvas {
         document.addEventListener('mousedown', event => {
             this.mouse.isPressed = true;
             this.mouse.updatePos(event.clientX, event.clientY);
+            document.body.style.cursor = 'grabbing';
         });
         document.addEventListener('mousemove', event => {
             if (!this.mouse.isPressed) return;
+            this.mouse.isPressed = true;
             this.mouse.updatePos(event.clientX, event.clientY);
             this.update();
         });
         document.addEventListener('mouseup', () => {
             this.mouse.isPressed = false;
+            document.body.style.cursor = 'default';
         });
         document.addEventListener('wheel', event => {
-            const deltaZoom = Math.sign(event.deltaY) * -.1;
             this.mouse.updatePos(event.clientX, event.clientY);
-            const mappedMousePos = this.canvasToGraph(this.mouse.pos);
-            this.graph.min.add(Vector.sub(mappedMousePos, this.graph.min).mult(deltaZoom));
-            this.graph.max.add(Vector.sub(mappedMousePos, this.graph.max).mult(deltaZoom));
+            this.graph.zoom(this.canvasToGraph(this.mouse.pos), Math.sign(event.deltaY) * -.1);
         });
     }
 
@@ -54,6 +54,7 @@ export default class Canvas {
     render() {
         this.clear();
         this.drawBackground();
+        this.drawGrid();
         this.drawAxis(this.graph);
         for (let id in this.graph.funcs) {
             const funcObj = this.graph.funcs[id];
@@ -81,6 +82,12 @@ export default class Canvas {
         this.ctx.closePath();
     }
 
+    drawGrid() {
+        for (let graphX = this.graph.min.x; graphX < this.graph.max.x; graphX++) {
+
+        }
+    }
+
     drawAxis() {
         this.line(
             this.graphToCanvas(new Vector(this.graph.min.x, 0)),
@@ -95,7 +102,7 @@ export default class Canvas {
     }
 
     plotFunc(func, strokeStyle) {
-        const dx = (this.graph.max.x - this.graph.min.x) * 1e-3;
+        const dx = (this.graph.max.x - this.graph.min.x) * 1e-4;
         let firstVertex;
         this.ctx.beginPath();
         for (let graphX = this.graph.min.x; graphX <= this.graph.max.x; graphX += dx) {
@@ -111,7 +118,7 @@ export default class Canvas {
         this.ctx.moveTo(firstVertex.x, firstVertex.y);
         this.ctx.closePath();
         this.ctx.strokeStyle = strokeStyle ?? this.styling.strokeStyle;
-        this.ctx.lineWidth = 2;
+        this.ctx.lineWidth = 3;
         this.ctx.stroke();
     }
 
