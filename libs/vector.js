@@ -161,6 +161,13 @@ class Vector {
         return args[0].copy().sub(...args.splice(1));
     }
 
+    static div(a, b) {
+        return new Vector(
+            a.x / b.x,
+            a.y / b.y,
+        );
+    }
+
     /**
      * Linearly interpolates between two vectors.
      * @param {Vector} a

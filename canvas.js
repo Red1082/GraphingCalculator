@@ -47,8 +47,8 @@ export default class Canvas {
         document.addEventListener('keydown', event => {
             //If the home key is pressed, reset the graph to its original scaling.
             if (event.key.toLowerCase() === 'h') {
-                this.graph.min = new Vector(-20, -10);
-                this.graph.max = new Vector(20, 10);
+                this.graph.min = new Vector(-10, -10);
+                this.graph.max = new Vector(10, 10);
                 return;
             }
             const vec = {
@@ -106,21 +106,42 @@ export default class Canvas {
     }
 
     drawGrid() {
-        for (let graphX = this.graph.min.x; graphX < this.graph.max.x; graphX++) {
+        for (let x = 0; x > this.graph.min.x; x--)
+            this.drawVerticalLine(x);
+        for (let x = 0; x < this.graph.max.x; x++)
+            this.drawVerticalLine(x);
+        for (let y = 0; y > this.graph.min.y; y--)
+            this.drawHorizontalLine(y);
+        for (let y = 0; y < this.graph.max.y; y++)
+            this.drawHorizontalLine(y);
+    }
 
-        }
+    drawVerticalLine(xValue) {
+        this.line(
+            this.graphToCanvas(new Vector(xValue, this.graph.min.y)),
+            this.graphToCanvas(new Vector(xValue, this.graph.max.y)),
+            xValue % 5 == 0 ? '#888' : '#333', 1.5
+        );
+    }
+
+    drawHorizontalLine(yValue) {
+        this.line(
+            this.graphToCanvas(new Vector(this.graph.min.x, yValue)),
+            this.graphToCanvas(new Vector(this.graph.max.x, yValue)),
+            yValue % 5 == 0 ? '#888' : '#333', 1.5
+        );
     }
 
     drawAxis() {
         this.line(
             this.graphToCanvas(new Vector(this.graph.min.x, 0)),
             this.graphToCanvas(new Vector(this.graph.max.x, 0)),
-            '#D9E4E8'
+            '#D9E4E8', 2
         );
         this.line(
             this.graphToCanvas(new Vector(0, this.graph.min.y)),
             this.graphToCanvas(new Vector(0, this.graph.max.y)),
-            '#D9E4E8'
+            '#D9E4E8', 2
         );
     }
 
@@ -141,28 +162,28 @@ export default class Canvas {
         this.ctx.moveTo(firstVertex.x, firstVertex.y);
         this.ctx.closePath();
         this.ctx.strokeStyle = strokeStyle ?? this.styling.strokeStyle;
-        this.ctx.lineWidth = 3;
+        this.ctx.lineWidth = 2;
         this.ctx.stroke();
     }
 
     graphVertexOutOfRange(vec) {
-        return vec.x < this.graph.min.x ||
-            vec.x > this.graph.max.x ||
-            vec.y < this.graph.min.y ||
-            vec.y > this.graph.max.y;
+        return vec.x < this.graph.min.x
+            || vec.x > this.graph.max.x
+            || vec.y < this.graph.min.y
+            || vec.y > this.graph.max.y;
     }
 
     getMinVertex(func) {
         return this.graphToCanvas(new Vector(this.graph.min.x, func(this.graph.min.x)));
     }
 
-    line(vecA, vecB, strokeStyle) {
+    line(vecA, vecB, strokeStyle, lineWidth) {
         this.ctx.beginPath();
         this.ctx.moveTo(vecA.x, vecA.y);
         this.ctx.lineTo(vecB.x, vecB.y);
         this.ctx.closePath();
         this.ctx.strokeStyle = strokeStyle ?? this.styling.strokeStyle;
-        this.ctx.lineWidth = 1;
+        this.ctx.lineWidth = lineWidth ?? 1;
         this.ctx.stroke();
     }
 
