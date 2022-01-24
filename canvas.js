@@ -44,6 +44,24 @@ export default class Canvas {
             this.mouse.updatePos(event.clientX, event.clientY);
             this.graph.zoom(this.canvasToGraph(this.mouse.pos), Math.sign(event.deltaY) * -.1);
         });
+        document.addEventListener('keydown', event => {
+            //If the home key is pressed, reset the graph to its original scaling.
+            if (event.key.toLowerCase() === 'h') {
+                this.graph.min = new Vector(-20, -10);
+                this.graph.max = new Vector(20, 10);
+                return;
+            }
+            const vec = {
+                'ArrowLeft': { x: .99, y: 1 },
+                'ArrowRight': { x: 1.01, y: 1 },
+                'ArrowDown': { x: 1, y: .99 },
+                'ArrowUp': { x: 1, y: 1.01 }
+            }[event.key];
+            if (!vec) return;
+            this.graph.scale(
+                new Vector(vec.x, vec.y)
+            );
+        });
     }
 
     resize(newWidth, newHeight, remapGraph) {

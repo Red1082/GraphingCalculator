@@ -42,16 +42,12 @@ class Vector {
      * @returns {Vector}.
      */
     add(...args) {
-        if (args.length === 1 && args[0] instanceof Vector) {
-            const vector = args[0];
-            this.x += vector.x;
-            this.y += vector.y;
-        } else
-            for (let elem of args) {
-                if (!(elem instanceof Vector))
-                    throw new TypeError(`'${elem}' is not a Vector.`);
-                this.add(elem);
-            }
+        args.forEach(elem => {
+            if (!(elem instanceof Vector))
+                return console.error(`'${elem}' is not a Vector.`);
+            this.x += elem.x;
+            this.y += elem.y;
+        });
         return this;
     }
 
@@ -62,8 +58,11 @@ class Vector {
      */
     sub(...args) {
         args.forEach(elem => {
-            if (elem instanceof Vector)
-                this.add(elem.copy().mult(-1));
+            if (!(elem instanceof Vector)) {
+                return console.error(`'${elem}' is not a Vector.`);
+            }
+            this.x -= elem.x;
+            this.y -= elem.y;
         });
         return this;
     }
@@ -125,7 +124,7 @@ class Vector {
 
     /**
      * Returns an object containing the components of the vector.
-     * Example: {x:3,y:4}
+     * Example: {x:3, y:4}
      * @returns {object}
      */
     asObject() {
@@ -154,13 +153,12 @@ class Vector {
     }
 
     /**
-     * Returns the difference between two vectors.
-     * @param {Vector} a 
-     * @param {Vector} b 
+     * Subtracts one or more vectors from the first vector and returns the result.
+     * @param {Vector[]} args 
      * @returns {Vector}
      */
-    static sub(a, b) {
-        return a.copy().sub(b);
+    static sub(...args) {
+        return args[0].copy().sub(...args.splice(1));
     }
 
     /**
@@ -178,11 +176,11 @@ class Vector {
     }
 }
 
-const handleNaN = (...args) => {
-    args.forEach(elem => {
-        if (typeof elem !== 'number')
-            throw new TypeError(`'${elem}' is NaN.`);
-    });
-};
+const handleNaN = (...args) =>
+    args.filter(elem =>
+        typeof elem !== 'number'
+            ? console.error(`'${elem}' is NaN.`)
+            : true
+    );
 
 export default Vector;

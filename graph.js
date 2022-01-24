@@ -24,6 +24,13 @@ export default class Graph {
         this.max.add(Vector.sub(pos, this.max).mult(deltaZoom));
     }
 
+    scale(vec) {
+        this.min.x *= vec.x;
+        this.max.x *= vec.x;
+        this.min.y *= vec.y;
+        this.max.y *= vec.y;
+    }
+
     appendFunc(id, func, color) {
         this.funcs[id] = {
             func,
