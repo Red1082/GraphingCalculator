@@ -3,8 +3,8 @@ import Graph from './graph.js';
 import Vector from './libs/vector.js';
 
 const graph = new Graph({
-    min: new Vector(-10, -10),
-    max: new Vector(10, 10)
+    min: new Vector(-20, -10),
+    max: new Vector(20, 10)
 });
 
 const canvas = new Canvas({

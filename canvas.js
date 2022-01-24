@@ -16,14 +16,14 @@ export default class Canvas {
                 this.pos.set(x, y);
             }
         };
-        this.resize(params.width, params.height);
+        this.resize(params.width, params.height, false);
         params.parent.appendChild(this.canvas);
         this.init();
     }
 
     init() {
         window.addEventListener('resize', () => {
-            this.resize(innerWidth, innerHeight);
+            this.resize(innerWidth, innerHeight, true);
         });
         document.addEventListener('mousedown', event => {
             this.mouse.isPressed = true;
@@ -46,7 +46,12 @@ export default class Canvas {
         });
     }
 
-    resize(newWidth, newHeight) {
+    resize(newWidth, newHeight, remapGraph) {
+        if (remapGraph) {
+            const ratio = (newWidth * this.height) / (this.width * newHeight);
+            this.graph.min.x *= ratio;
+            this.graph.max.x *= ratio;
+        }
         this.canvas.width = this.width = newWidth;
         this.canvas.height = this.height = newHeight;
     }
