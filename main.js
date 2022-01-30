@@ -20,12 +20,15 @@ const canvas = new Canvas({
     graph: graph
 });
 
-// /*
-graph.appendFunc('log', Math.log2, 'green');
-graph.appendFunc('n', n => n < 0 ? NaN : n, '#44f902');
-graph.appendFunc('nlogn', n => n * Math.log2(n), '#ddf902');
-graph.appendFunc('n^2', n => n < 0 ? NaN : n ** 2, '#fc1500');
-// */
+graph.appendFunc('semicircle', x => (1 - x ** 2) ** .5, 'royalBlue', 1e-4);
+graph.appendFunc('cosine', Math.cos, 'crimson');
+graph.appendFunc('ascending sine', x => x + Math.sin(x), 'teal');
+graph.appendFunc('fourier square wave', x => {
+    let sum = 0;
+    for (let n = 0; n < 8; n++)
+        sum += Math.sin(x * (2 * n + 1)) / (2 * n + 1);
+    return sum;
+}, '#18A558', 1e-3);
 
 function draw() {
     requestAnimationFrame(draw);

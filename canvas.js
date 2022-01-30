@@ -81,7 +81,7 @@ export default class Canvas {
         this.drawAxis(this.graph);
         for (let id in this.graph.funcs) {
             const funcObj = this.graph.funcs[id];
-            this.plotFunc(funcObj.func, funcObj.strokeStyle);
+            this.plotFunc(funcObj.func, funcObj.strokeStyle, funcObj.customIncConst ?? 1e-2);
         }
     }
 
@@ -106,6 +106,7 @@ export default class Canvas {
     }
 
     drawGrid() {
+        const mid = Vector.add(this.graph.min, this.graph.max);
         for (let x = 0; x > this.graph.min.x; x--)
             this.drawVerticalLine(x);
         for (let x = 0; x < this.graph.max.x; x++)
@@ -145,32 +146,24 @@ export default class Canvas {
         );
     }
 
-    plotFunc(func, strokeStyle) {
-        const dx = (this.graph.max.x - this.graph.min.x) * 1e-4;
-        let firstVertex;
+    plotFunc(func, strokeStyle, inc) {
+        //This needs A LOT of improvement :/
+        const dx = (this.graph.max.x - this.graph.min.x) * inc ?? 1e-2;
         this.ctx.beginPath();
-        for (let graphX = this.graph.min.x; graphX <= this.graph.max.x; graphX += dx) {
-            const graphY = func(graphX);
-            if (isNaN(graphY)) continue;
-            const graphVertex = new Vector(graphX, graphY);
-            if (this.graphVertexOutOfRange(graphVertex)) continue;
-            const canvasVertex = this.graphToCanvas(graphVertex);
-            if (!firstVertex) firstVertex = canvasVertex;
-            this.ctx.lineTo(canvasVertex.x, canvasVertex.y);
+        for (let x = this.graph.min.x; x < this.graph.max.x; x += dx) {
+            const y = func(x);
+            const vertex = this.graphToCanvas(new Vector(x, y));
+            this.ctx.lineTo(vertex.x, vertex.y);
         }
-        if (!firstVertex) firstVertex = new Vector();
-        this.ctx.moveTo(firstVertex.x, firstVertex.y);
-        this.ctx.closePath();
-        this.ctx.strokeStyle = strokeStyle ?? this.styling.strokeStyle;
-        this.ctx.lineWidth = 2;
+        this.ctx.strokeStyle = strokeStyle;
         this.ctx.stroke();
     }
 
-    graphVertexOutOfRange(vec) {
-        return vec.x < this.graph.min.x
-            || vec.x > this.graph.max.x
-            || vec.y < this.graph.min.y
-            || vec.y > this.graph.max.y;
+    graphVertexOutOfRange(x, y) {
+        return x < this.graph.min.x
+            || x > this.graph.max.x
+            || y < this.graph.min.y
+            || y > this.graph.max.y;
     }
 
     getMinVertex(func) {
