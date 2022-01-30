@@ -31,12 +31,13 @@ export default class Graph {
         this.max.y *= vec.y;
     }
 
-    appendFunc(id, func, color) {
+    appendFunc(id, func, color, customIncConst) {
         this.funcs[id] = {
             func,
             strokeStyle: color ?? this.graphStyles[
                 Math.floor(Math.random() * this.graphStyles.length)
-            ]
+            ],
+            customIncConst
         };
     }
 }
